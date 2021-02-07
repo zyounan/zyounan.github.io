@@ -63,7 +63,8 @@ export const ThemeSwitch = () => {
   }
 
   useEffect(() => {
-    const checked = Storage.getTheme(Dom.hasClassOfBody(THEME.DARK))
+    const isThemeDark = typeof (window) !== `undefined` ? window.matchMedia('(prefers-color-scheme: dark)') : false
+    const checked = Storage.getTheme(Dom.hasClassOfBody(THEME.DARK)) || isThemeDark
 
     handleChange(checked)
   }, [])
