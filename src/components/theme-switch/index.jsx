@@ -54,7 +54,7 @@ function toggleTheme(theme) {
 export const ThemeSwitch = () => {
   const [checked, setChecked] = useState(false)
 
-  const handleChange = checked => {
+  const doHandleChange = checked => {
     const theme = getTheme(checked)
 
     Storage.setTheme(checked)
@@ -62,11 +62,17 @@ export const ThemeSwitch = () => {
     toggleTheme(theme)
   }
 
+  const handleChange = checked => {
+    Storage.setVariable('toggled', true)
+    doHandleChange(checked)
+  }
+
   useEffect(() => {
     const isThemeDark = typeof (window) !== `undefined` ? window.matchMedia('(prefers-color-scheme: dark)') : false
-    const checked = Storage.getTheme(Dom.hasClassOfBody(THEME.DARK)) || isThemeDark
+    const toggled = Storage.getVariable('toggled', false)
+    const checked = Storage.getTheme(Dom.hasClassOfBody(THEME.DARK)) || (!toggled && isThemeDark)
 
-    handleChange(checked)
+    doHandleChange(checked)
   }, [])
 
   return (
