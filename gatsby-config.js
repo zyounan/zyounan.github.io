@@ -27,6 +27,7 @@ module.exports = {
     {
       resolve: `gatsby-transformer-remark`,
       options: {
+        excerpt_separator: `<!-- separate -->`,
         plugins: [
           {
             resolve: `gatsby-remark-katex`,
