@@ -109,7 +109,117 @@ app</code></pre></div>
 <li>包含 <code class="language-text">BUILD</code> 文件的目录名就是包名，例如 <code class="language-text">my/app</code>。注意包名中不能含有 <code class="language-text">/</code></li>
 <li>不能含有 <code class="language-text">//</code>，不能以 <code class="language-text">/</code> 结尾</li>
 </ul>
-<h4 id="规则" style="position:relative;"><a href="#%E8%A7%84%E5%88%99" aria-label="规则 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>规则</h4></div><hr class="custom-hr"/><div class="bio"><div class="author"><div class="author-description"><div class="author-image gatsby-image-wrapper" style="position:relative;overflow:hidden;display:inline-block;width:72px;height:72px;border-radius:100%"><img aria-hidden="true" src="data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAEDBQIE/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/9oADAMBAAIQAxAAAAHqjSrG2ggjGYI+8G//xAAeEAACAQMFAAAAAAAAAAAAAAABAwIEECIREjEyM//aAAgBAQABBQKrkSyKzG01ZsK9sep40yR5/wD/xAAWEQEBAQAAAAAAAAAAAAAAAAABEBH/2gAIAQMBAT8BMjP/xAAZEQABBQAAAAAAAAAAAAAAAAAAAQIQITH/2gAIAQIBAT8BuGi6f//EABwQAAMAAQUAAAAAAAAAAAAAAAABEQIQEjFBUf/aAAgBAQAGPwLYV2d6PP3kSxaooMoj/8QAHxABAAICAAcAAAAAAAAAAAAAAQARITFBYXGBobHB/9oACAEBAAE/IaY7H2VLVOjVwyWaYeSvgItaTUIErA3HXSlBALeMVtzfc//aAAwDAQACAAMAAAAQ3A8C/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREP/aAAgBAwEBPxBYBLeS/8QAGBEAAgMAAAAAAAAAAAAAAAAAADEBEGH/2gAIAQIBAT8QxTyMP//EABsQAQACAwEBAAAAAAAAAAAAAAEAESExQXGx/9oACAEBAAE/EKQYDZj1Kh40NQOSILMFidJUqaZIUHJT8seh1YXw0A7JYKGtGFvKRpmKpt+if//Z" alt="zyounan" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
+<h4 id="规则" style="position:relative;"><a href="#%E8%A7%84%E5%88%99" aria-label="规则 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>规则</h4>
+<p>给个样例看一下，</p>
+<div class="gatsby-highlight" data-language="txt"><pre class="language-txt"><code class="language-txt">cc_binary(
+    name = &quot;my_app&quot;,
+    srcs = [&quot;my_app.cc&quot;],
+    deps = [
+        &quot;//absl/base&quot;,
+        &quot;//absl/strings&quot;,
+    ],
+)</code></pre></div>
+<ul>
+<li><code class="language-text">srcs</code> 属性 [ <code class="language-text">labels</code> 的一个列表]</li>
+<li>
+<p><code class="language-text">outs</code> 属性 [ <code class="language-text">output labels</code> 的一个列表]</p>
+<ul>
+<li>不能含有包的部分</li>
+</ul>
+</li>
+</ul>
+<h4 id="build-文件" style="position:relative;"><a href="#build-%E6%96%87%E4%BB%B6" aria-label="build 文件 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>BUILD 文件</h4>
+<p><code class="language-text">BUILD</code> 文件使用的命令式语言是 <code class="language-text">Starlark</code> 。虽然说注意顺序是必要的，但是大部分的情形下，<code class="language-text">BUILD</code> 文件仅仅包含<em>构建规则</em> 的声明，并且这些声明的先后顺序是无关紧要的。当一个构建规则函数，例如 <code class="language-text">cc_library</code> 被执行的时候，它在 <em>依赖图</em> 中创建一个新的 <em>目标</em>。这个目标之后可以被通过 <em>标签</em> 引用。所以仅仅更改声明顺序是没有关系的。</p>
+<p><code class="language-text">BUILD</code> 文件中不能包含函数的定义，<code class="language-text">for</code> 语句或者 <code class="language-text">if</code> 语句。但是 <code class="language-text">list comprehensions</code> 和 <code class="language-text">if</code> 表达式是 OK 的。函数在 <code class="language-text">.bzl</code> 文件中声明，另外 <code class="language-text">*args</code> 和 <code class="language-text">**kwargs</code> 不被允许出现在 <code class="language-text">BUILD</code> 文件中，只能显式地全部列出来。</p>
+<p>不能在 <code class="language-text">Starlark</code> 中随意使用 <code class="language-text">IO</code>。</p>
+<p>编码只能使用 <code class="language-text">ASCII</code>。（连 <code class="language-text">utf-8</code> 都不支持的吗！）</p>
+<h4 id="加载插件" style="position:relative;"><a href="#%E5%8A%A0%E8%BD%BD%E6%8F%92%E4%BB%B6" aria-label="加载插件 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>加载插件</h4>
+<p>插件是以 <code class="language-text">.bzl</code> 结尾的文件。</p>
+<div class="gatsby-highlight" data-language="txt"><pre class="language-txt"><code class="language-txt">load(&quot;//foo/bar:file.bzl&quot;, &quot;some_library&quot;)</code></pre></div>
+<p>这段代码将会加载 <code class="language-text">foo/bar/file.bzl</code> 并且把符号 <code class="language-text">some_library</code> 添加到环境中。可以用来加载规则、字符串、函数、常量。注意 <code class="language-text">load</code> 接受可变参数用来添加多个符号；实参必须是<strong>字符串字面量</strong>，不能是变量。不能把 <code class="language-text">load</code> 放到函数里，只能放到顶层。语句中的相对标签应该使用 <code class="language-text">:</code> 作为起始。<code class="language-text">load</code> 也支持别名。把这些规则缝合到一起看一下，</p>
+<div class="gatsby-highlight" data-language="txt"><pre class="language-txt"><code class="language-txt">load(&quot;:my_rules.bzl&quot;, &quot;some_rule&quot;, nice_alias = &quot;some_other_rule&quot;)</code></pre></div>
+<p>注意 <code class="language-text">.bzl</code> 文件中， 以下划线开头的符号不会被导出、并且不能被其他的导入。目前也不需要使用 <code class="language-text">exports_files</code> 让某个符号可见。</p>
+<h4 id="构建规则的类型" style="position:relative;"><a href="#%E6%9E%84%E5%BB%BA%E8%A7%84%E5%88%99%E7%9A%84%E7%B1%BB%E5%9E%8B" aria-label="构建规则的类型 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>构建规则的类型</h4>
+<p>不同语言使用的构建语句成组出现。例如，对于 C++ ，<code class="language-text">cc_binary</code>, <code class="language-text">cc_library</code>, <code class="language-text">cc_test</code> 对应可执行、库、测试。Java 的前缀是 <code class="language-text">java_*</code> 。当然你自己创建一些新的规则也是可以的，</p>
+<ul>
+<li><code class="language-text">*_binary</code> 规则使用给定的语言构造可执行程序。执行构建后，对应名字的可执行文件将会出现在当前规则标签的输出树中。例如 <code class="language-text">//my:program</code> 将会出现在 <code class="language-text">$(BINDIR)/my/program</code></li>
+<li><code class="language-text">*_library</code></li>
+<li><code class="language-text">*_test</code></li>
+</ul>
+<h4 id="依赖" style="position:relative;"><a href="#%E4%BE%9D%E8%B5%96" aria-label="依赖 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>依赖</h4>
+<p>依赖图是 <strong>DAG</strong>. 直接依赖、传递依赖</p>
+<h5 id="实际和声明的依赖" style="position:relative;"><a href="#%E5%AE%9E%E9%99%85%E5%92%8C%E5%A3%B0%E6%98%8E%E7%9A%84%E4%BE%9D%E8%B5%96" aria-label="实际和声明的依赖 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>实际和声明的依赖</h5>
+<p>目标 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span> 实际依赖目标 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span></span></span></span> 当且仅当 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span></span></span></span> 存在，并且是最新版本时才可正确构建目标 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span>。</p>
+<p>目标 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span> 声明依赖目标 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span></span></span></span> 当且仅当在包 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span> 中有一条从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span> 到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Y</mi></mrow><annotation encoding="application/x-tex">Y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.22222em;">Y</span></span></span></span> 的依赖边。</p>
+<p>要求所有的实际依赖必须在声明依赖中出现。不过过多的声明依赖让构造速度减慢。</p>
+<p>在构建目标 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span> 的时候，构建工具检查 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>X</mi></mrow><annotation encoding="application/x-tex">X</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.07847em;">X</span></span></span></span> 依赖的传递闭包，确保这些目标的所有更改都能影响最终的结果，如果需要的话，重新构建中间件。</p>
+<p>考虑这样的一个问题，</p>
+<p>一开始，事情很美好。</p>
+<div class="gatsby-highlight" data-language="txt"><pre class="language-txt"><code class="language-txt"># In file a/BUILD
+
+rule(
+    name = &quot;a&quot;,
+    srcs = &quot;a.in&quot;,
+    deps = &quot;//b:b&quot;,
+)</code></pre></div>
+<div class="gatsby-highlight" data-language="txt"><pre class="language-txt"><code class="language-txt"># In file b/BUILD
+
+rule(
+    name = &quot;b&quot;,
+    srcs = &quot;b.in&quot;,
+    deps = &quot;//c:c&quot;,
+)</code></pre></div>
+<div class="gatsby-highlight" data-language="js"><pre class="language-js"><code class="language-js"><span class="token comment">// a/a.in</span>
+<span class="token keyword">import</span> b<span class="token punctuation">;</span>
+b<span class="token punctuation">.</span><span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
+<div class="gatsby-highlight" data-language="js"><pre class="language-js"><code class="language-js"><span class="token comment">// b/b.in</span>
+<span class="token keyword">import</span> c<span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    c<span class="token punctuation">.</span><span class="token function">bar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>之后我们在 <code class="language-text">a.in</code> 中引入一点东西，</p>
+<div class="gatsby-highlight" data-language="diff"><pre class="language-diff"><code class="language-diff">import b;
+<span class="token inserted-sign inserted"><span class="token prefix inserted">+</span> import c;
+</span>
+b.foo();
+<span class="token inserted-sign inserted"><span class="token prefix inserted">+</span> c.garply();</span></code></pre></div>
+<p>但是这个时候我们没有在 <code class="language-text">a/BUILD</code> 中引入对 <code class="language-text">c</code> 的 <code class="language-text">deps</code>。换句话说，这个时候的 <em>声明引用</em> 是这样的，  </p>
+<p><img src="https://docs.bazel.build/versions/master/images/a_b_c.svg"></p>
+<p>与此同时 <em>实际引用</em> 是这样的，  </p>
+<p><img src="https://docs.bazel.build/versions/master/images/a_b_c_ac.svg"></p>
+<p>这两个图的传递闭包是一样的，所以构造的时候应该没什么问题——但是这个时候，有个人重构了 <code class="language-text">b</code> , <code class="language-text">b</code> 不再依赖 <code class="language-text">c</code> 了：</p>
+<div class="gatsby-highlight" data-language="txt"><pre class="language-txt"><code class="language-txt"># In file b/BUILD
+rule(
+    name = &quot;b&quot;,
+    srcs = &quot;b.in&quot;,
+    deps = &quot;//d:d&quot;,
+)</code></pre></div>
+<div class="gatsby-highlight" data-language="js"><pre class="language-js"><code class="language-js"><span class="token comment">// b/b.in</span>
+<span class="token keyword">import</span> d<span class="token punctuation">;</span>
+<span class="token keyword">function</span> <span class="token function">foo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    d<span class="token punctuation">.</span><span class="token function">baz</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p><em>声明引用</em> 现在变成了这个样子，
+<img src="https://docs.bazel.build/versions/master/images/ab_c.svg">,</p>
+<p><em>实际引用</em> 是这样的，
+<img src="https://docs.bazel.build/versions/master/images/a_b_a_c.svg">,</p>
+<p>你发现 <em>实际引用</em> 中的这条边 <code class="language-text">a --&gt; c</code> 并未在 <em>声明引用</em> 中出现 —— 这就会让构建出现问题。</p>
+<h5 id="依赖的类型" style="position:relative;"><a href="#%E4%BE%9D%E8%B5%96%E7%9A%84%E7%B1%BB%E5%9E%8B" aria-label="依赖的类型 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>依赖的类型</h5>
+<p>大部分的构造规则拥有三种的依赖类型：<code class="language-text">srcs</code>, <code class="language-text">deps</code>, <code class="language-text">data</code>。</p>
+<ul>
+<li><code class="language-text">srcs</code> 依赖</li>
+</ul>
+<p>直接被规则使用或者输出源文件的构建规则</p>
+<ul>
+<li><code class="language-text">deps</code> 依赖</li>
+</ul>
+<p>指向被独立构建模块的规则。这些独立构建的模块提供头文件、符号、库……</p>
+<ul>
+<li><code class="language-text">data</code> 依赖</li>
+</ul>
+<p>例如单元测试中使用的数据文件。</p>
+<h5 id="使用标签指代目录" style="position:relative;"><a href="#%E4%BD%BF%E7%94%A8%E6%A0%87%E7%AD%BE%E6%8C%87%E4%BB%A3%E7%9B%AE%E5%BD%95" aria-label="使用标签指代目录 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>使用标签指代目录</h5></div><hr class="custom-hr"/><div class="bio"><div class="author"><div class="author-description"><div class="author-image gatsby-image-wrapper" style="position:relative;overflow:hidden;display:inline-block;width:72px;height:72px;border-radius:100%"><img aria-hidden="true" src="data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAEDBQIE/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/9oADAMBAAIQAxAAAAHqjSrG2ggjGYI+8G//xAAeEAACAQMFAAAAAAAAAAAAAAABAwIEECIREjEyM//aAAgBAQABBQKrkSyKzG01ZsK9sep40yR5/wD/xAAWEQEBAQAAAAAAAAAAAAAAAAABEBH/2gAIAQMBAT8BMjP/xAAZEQABBQAAAAAAAAAAAAAAAAAAAQIQITH/2gAIAQIBAT8BuGi6f//EABwQAAMAAQUAAAAAAAAAAAAAAAABEQIQEjFBUf/aAAgBAQAGPwLYV2d6PP3kSxaooMoj/8QAHxABAAICAAcAAAAAAAAAAAAAAQARITFBYXGBobHB/9oACAEBAAE/IaY7H2VLVOjVwyWaYeSvgItaTUIErA3HXSlBALeMVtzfc//aAAwDAQACAAMAAAAQ3A8C/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREP/aAAgBAwEBPxBYBLeS/8QAGBEAAgMAAAAAAAAAAAAAAAAAADEBEGH/2gAIAQIBAT8QxTyMP//EABsQAQACAwEBAAAAAAAAAAAAAAEAESExQXGx/9oACAEBAAE/EKQYDZj1Kh40NQOSILMFidJUqaZIUHJT8seh1YXw0A7JYKGtGFvKRpmKpt+if//Z" alt="zyounan" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
 /static/24586f25491b4271459aa2a1c35b309c/3bd3e/profile.jpg 1.5x,
 /static/24586f25491b4271459aa2a1c35b309c/9d183/profile.jpg 2x" /><img loading="lazy" width="72" height="72" srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
 /static/24586f25491b4271459aa2a1c35b309c/3bd3e/profile.jpg 1.5x,
