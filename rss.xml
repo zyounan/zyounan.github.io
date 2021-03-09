@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[zyounan's blog]]></title><description><![CDATA[Blog posted about ...]]></description><link>https://zyounan.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Mon, 08 Mar 2021 14:53:08 GMT</lastBuildDate><item><title><![CDATA[Bazel 学习笔记]]></title><description><![CDATA[官方文档的大致整理 :)]]></description><link>https://zyounan.github.io/随手记/bazel-学习笔记/</link><guid isPermaLink="false">https://zyounan.github.io/随手记/bazel-学习笔记/</guid><pubDate>Fri, 05 Mar 2021 14:04:14 GMT</pubDate><content:encoded>&lt;p&gt;官方文档的大致整理 :)&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[zyounan's blog]]></title><description><![CDATA[Blog posted about ...]]></description><link>https://zyounan.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 09 Mar 2021 09:52:24 GMT</lastBuildDate><item><title><![CDATA[Bazel 学习笔记]]></title><description><![CDATA[官方文档的大致整理 :)]]></description><link>https://zyounan.github.io/随手记/bazel-学习笔记/</link><guid isPermaLink="false">https://zyounan.github.io/随手记/bazel-学习笔记/</guid><pubDate>Fri, 05 Mar 2021 14:04:14 GMT</pubDate><content:encoded>&lt;p&gt;官方文档的大致整理 :)&lt;/p&gt;
 &lt;!-- separate --&gt;
 &lt;h3 id=&quot;一些基本概念和名词&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%90%8D%E8%AF%8D&quot; aria-label=&quot;一些基本概念和名词 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;一些基本概念和名词&lt;/h3&gt;
 &lt;h4 id=&quot;workspace&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#workspace&quot; aria-label=&quot;workspace permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Workspace&lt;/h4&gt;
@@ -153,7 +153,62 @@ rule(
 &lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;data&lt;/code&gt; 依赖&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;例如单元测试中使用的数据文件。&lt;/p&gt;
-&lt;h5 id=&quot;使用标签指代目录&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E4%BD%BF%E7%94%A8%E6%A0%87%E7%AD%BE%E6%8C%87%E4%BB%A3%E7%9B%AE%E5%BD%95&quot; aria-label=&quot;使用标签指代目录 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;使用标签指代目录&lt;/h5&gt;</content:encoded></item><item><title><![CDATA[新博客]]></title><description><![CDATA[Hello, world! 试着搞一个基于  的静态博客吧。之后会把老博客上的内容逐渐搬过来 :)  公式   代码块]]></description><link>https://zyounan.github.io/随手记/新博客/</link><guid isPermaLink="false">https://zyounan.github.io/随手记/新博客/</guid><pubDate>Sun, 07 Feb 2021 19:02:34 GMT</pubDate><content:encoded>&lt;p&gt;Hello, world!&lt;/p&gt;
+&lt;h5 id=&quot;使用标签指代目录&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E4%BD%BF%E7%94%A8%E6%A0%87%E7%AD%BE%E6%8C%87%E4%BB%A3%E7%9B%AE%E5%BD%95&quot; aria-label=&quot;使用标签指代目录 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;使用标签指代目录&lt;/h5&gt;
+&lt;h3 id=&quot;命令&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E5%91%BD%E4%BB%A4&quot; aria-label=&quot;命令 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;命令&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;bazel build path/to/srcs:target&lt;/code&gt; &lt;/li&gt;
+&lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;bazel run path/to/srcs:target&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;bazel test path/to/srcs:target&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;bazel clean&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果 &lt;code class=&quot;language-text&quot;&gt;target&lt;/code&gt; 是 &lt;code class=&quot;language-text&quot;&gt;all&lt;/code&gt;，那么就是构建当前目录下的所有东西。例如 &lt;code class=&quot;language-text&quot;&gt;bazel build src:all&lt;/code&gt;; 但是如果要构建 &lt;code class=&quot;language-text&quot;&gt;workspace&lt;/code&gt; 下面的所有目标，可以使用 &lt;code class=&quot;language-text&quot;&gt;...&lt;/code&gt; 这样的模式。&lt;/p&gt;
+&lt;h3 id=&quot;引入其他语言&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E5%BC%95%E5%85%A5%E5%85%B6%E4%BB%96%E8%AF%AD%E8%A8%80&quot; aria-label=&quot;引入其他语言 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;引入其他语言&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;WORKSPACE&lt;/code&gt; 可以 &lt;code class=&quot;language-text&quot;&gt;load&lt;/code&gt; 一些东西……&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;自带的先引进来&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;starlark&quot;&gt;&lt;pre class=&quot;language-starlark&quot;&gt;&lt;code class=&quot;language-starlark&quot;&gt;load(&amp;quot;@bazel_tools//tools/build_defs/repo:http.bzl&amp;quot;, &amp;quot;http_archive&amp;quot;)
+# 类似的还有 git_repostiory
+load(&amp;quot;@bazel_tools//tools/build_defs/repo:git.bzl&amp;quot;, &amp;quot;git_repository&amp;quot;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;然后你就可以引入外部的规则啦! 引入的东西下载到 &lt;code class=&quot;language-text&quot;&gt;bazel-&amp;lt;workspace_name&amp;gt;/external/&lt;/code&gt; 下面。
+引入一个 &lt;code class=&quot;language-text&quot;&gt;Golang&lt;/code&gt; 的试一下，首先先下载，&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;bazel&quot;&gt;&lt;pre class=&quot;language-bazel&quot;&gt;&lt;code class=&quot;language-bazel&quot;&gt;http_archive(
+    name = &amp;quot;io_bazel_rules_go&amp;quot;,
+    urls = [&amp;quot;https://github.com/bazelbuild/rules_go/releases/download/v0.26.0/rules_go-v0.26.0.tar.gz&amp;quot;],
+)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;之后这个规则对应的仓库名就叫 &lt;code class=&quot;language-text&quot;&gt;io_bazel_rules_go&lt;/code&gt;，初始化一下，&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;bazel&quot;&gt;&lt;pre class=&quot;language-bazel&quot;&gt;&lt;code class=&quot;language-bazel&quot;&gt;load(&amp;quot;@io_bazel_rules_go//go:deps.bzl&amp;quot;, &amp;quot;go_register_toolchains&amp;quot;, &amp;quot;go_rules_dependencies&amp;quot;)
+
+go_rules_dependencies()
+
+go_register_toolchains(
+    version = &amp;quot;host&amp;quot;,
+)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;好了，现在可以在 &lt;code class=&quot;language-text&quot;&gt;BUILD&lt;/code&gt; 下面写规则了&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;bazel&quot;&gt;&lt;pre class=&quot;language-bazel&quot;&gt;&lt;code class=&quot;language-bazel&quot;&gt;load(&amp;quot;@io_bazel_rules_go//go:def.bzl&amp;quot;, &amp;quot;go_binary&amp;quot;)
+go_binary(
+    name = &amp;quot;hello_world_go&amp;quot;,
+    srcs = [&amp;quot;hello_world.go&amp;quot;],
+)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;引入 &lt;code class=&quot;language-text&quot;&gt;Rust&lt;/code&gt;，参考 &lt;a href=&quot;https://bazelbuild.github.io/rules_rust/&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;bazel&quot;&gt;&lt;pre class=&quot;language-bazel&quot;&gt;&lt;code class=&quot;language-bazel&quot;&gt;http_archive(
+    name = &amp;quot;rules_rust&amp;quot;,
+    sha256 = &amp;quot;e6d835ee673f388aa5b62dc23d82db8fc76497e93fa47d8a4afe97abaf09b10d&amp;quot;,
+    strip_prefix = &amp;quot;rules_rust-f37b9d6a552e9412285e627f30cb124e709f4f7a&amp;quot;,
+    urls = [
+        # Master branch as of 2021-01-27
+        &amp;quot;https://github.com/bazelbuild/rules_rust/archive/f37b9d6a552e9412285e627f30cb124e709f4f7a.tar.gz&amp;quot;,
+    ],
+)
+
+load(&amp;quot;@rules_rust//rust:repositories.bzl&amp;quot;, &amp;quot;rust_repositories&amp;quot;)
+
+rust_repositories()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;之后是 &lt;code class=&quot;language-text&quot;&gt;BUILD&lt;/code&gt;，&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;bazel&quot;&gt;&lt;pre class=&quot;language-bazel&quot;&gt;&lt;code class=&quot;language-bazel&quot;&gt;rust_binary(
+    name = &amp;quot;hello_world_rust&amp;quot;,
+    srcs = [&amp;quot;hello_world.rs&amp;quot;],
+)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content:encoded></item><item><title><![CDATA[新博客]]></title><description><![CDATA[Hello, world! 试着搞一个基于  的静态博客吧。之后会把老博客上的内容逐渐搬过来 :)  公式   代码块]]></description><link>https://zyounan.github.io/随手记/新博客/</link><guid isPermaLink="false">https://zyounan.github.io/随手记/新博客/</guid><pubDate>Sun, 07 Feb 2021 19:02:34 GMT</pubDate><content:encoded>&lt;p&gt;Hello, world!&lt;/p&gt;
 &lt;p&gt;试着搞一个基于 &lt;code class=&quot;language-text&quot;&gt;gatsby&lt;/code&gt; 的静态博客吧。之后会把老博客上的内容逐渐搬过来 :)&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;TeX&lt;/code&gt; 公式  &lt;/li&gt;
