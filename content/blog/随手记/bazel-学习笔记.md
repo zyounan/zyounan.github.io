@@ -247,3 +247,80 @@ function foo() {
 
 ##### 使用标签指代目录
 
+
+### 命令
+
+- `bazel build path/to/srcs:target` 
+- `bazel run path/to/srcs:target`
+- `bazel test path/to/srcs:target`
+- `bazel clean`
+
+
+如果 `target` 是 `all`，那么就是构建当前目录下的所有东西。例如 `bazel build src:all`; 但是如果要构建 `workspace` 下面的所有目标，可以使用 `...` 这样的模式。
+
+
+### 引入其他语言
+
+1. `WORKSPACE` 可以 `load` 一些东西……
+
+自带的先引进来
+```starlark
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+# 类似的还有 git_repostiory
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+```
+
+然后你就可以引入外部的规则啦! 引入的东西下载到 `bazel-<workspace_name>/external/` 下面。
+引入一个 `Golang` 的试一下，首先先下载，
+```bazel
+http_archive(
+    name = "io_bazel_rules_go",
+    urls = ["https://github.com/bazelbuild/rules_go/releases/download/v0.26.0/rules_go-v0.26.0.tar.gz"],
+)
+```
+之后这个规则对应的仓库名就叫 `io_bazel_rules_go`，初始化一下，
+```bazel
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains(
+    version = "host",
+)
+```
+
+好了，现在可以在 `BUILD` 下面写规则了
+
+```bazel
+load("@io_bazel_rules_go//go:def.bzl", "go_binary")
+go_binary(
+    name = "hello_world_go",
+    srcs = ["hello_world.go"],
+)
+```
+
+引入 `Rust`，参考 [https://bazelbuild.github.io/rules_rust/]()  
+
+```bazel
+http_archive(
+    name = "rules_rust",
+    sha256 = "e6d835ee673f388aa5b62dc23d82db8fc76497e93fa47d8a4afe97abaf09b10d",
+    strip_prefix = "rules_rust-f37b9d6a552e9412285e627f30cb124e709f4f7a",
+    urls = [
+        # Master branch as of 2021-01-27
+        "https://github.com/bazelbuild/rules_rust/archive/f37b9d6a552e9412285e627f30cb124e709f4f7a.tar.gz",
+    ],
+)
+
+load("@rules_rust//rust:repositories.bzl", "rust_repositories")
+
+rust_repositories()
+```
+之后是 `BUILD`，
+
+```bazel
+rust_binary(
+    name = "hello_world_rust",
+    srcs = ["hello_world.rs"],
+)
+```
