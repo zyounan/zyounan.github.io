@@ -261,7 +261,7 @@ function foo() {
 
 ### 引入其他语言
 
-1. `WORKSPACE` 可以 `load` 一些东西……
+`WORKSPACE` 可以 `load` 一些东西……
 
 自带的先引进来
 ```starlark
@@ -299,7 +299,7 @@ go_binary(
 )
 ```
 
-引入 `Rust`，参考 [https://bazelbuild.github.io/rules_rust/]()  
+引入 `Rust`，参考 https://bazelbuild.github.io/rules_rust/  
 
 ```bazel
 http_archive(
@@ -323,4 +323,108 @@ rust_binary(
     name = "hello_world_rust",
     srcs = ["hello_world.rs"],
 )
+```
+
+### 引入 Protobuf 依赖
+
+以 C++ 为例。首先在 `WORKSPACE` 中引入 `proto` 依赖，
+
+```bazel
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+    name = "rules_proto",
+    remote = "https://github.com/bazelbuild/rules_proto.git",
+    commit = "f7a30f6f80006b591fa7c437fe5a951eb10bcbcf",
+    verbose = True,
+)
+
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+
+rules_proto_dependencies()
+
+rules_proto_toolchains()
+```
+
+这里不用 `http_archive` 的原因是官方文档给的 `README` 过于久远没有更新，所以和新版的 `Bazel` 有不兼容的地方... 
+
+接着我们在 `src` 下面写一个 `proto`, 
+
+```protobuf
+syntax = "proto3";
+
+package transmission_object;
+
+message TransmissionObject {
+    float value = 1;
+    string message = 2;
+}
+```
+
+保存为 `transmission_object.proto`。接着写 `BUILD` 文件，
+
+```bazel
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+proto_library(
+    name = "transmission_object_proto",
+    srcs = ["transmission_object.proto"],
+)
+
+cc_proto_library(
+    name = "transmission_object_cxx_proto",
+    deps = [":transmission_object_proto"],
+)
+```
+
+`bazel` 将会根据这个生成 C++ 对应的 `protobuf` 头文件和代码。我们写一个测试程序，
+```cpp
+#include <iostream>
+#include <string>
+#include "src/transmission_object.pb.h"
+
+int main() {
+    std::ios_base::sync_with_stdio(false);
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+    float value;
+    std::string message;
+    std::cin >> value >> message;
+
+    transmission_object::TransmissionObject obj;
+    obj.set_message(message);
+    obj.set_value(value);
+
+    std::cout << obj.DebugString() << std::endl;
+    return 0;
+}
+```
+
+接着在 `BUILD` 中加入 `cc_binary`，
+```bazel
+cc_binary(
+    name = "proto_cxx_test",
+    srcs = [
+        "run.cc",
+    ],
+    deps = [":transmission_object_cxx_proto"],
+)
+```
+
+就可以愉快地构建啦！ `bazel run src:proto_cxx_test`  
+
+注意 `cc` 中包含 `transmission_object.pb.h` 的方式。`bazel` 默认将 `proto` 生成在 `bazel-bin/src/` 下面。
+
+```bash
+# bazel run src:proto_cxx_test
+INFO: Analyzed target //src:proto_cxx_test (0 packages loaded, 0 targets configured).
+INFO: Found 1 target...
+Target //src:proto_cxx_test up-to-date:
+  bazel-bin/src/proto_cxx_test.exe
+INFO: Elapsed time: 0.207s, Critical Path: 0.01s
+INFO: 1 process: 1 internal.
+INFO: Build completed successfully, 1 total action
+INFO: Build completed successfully, 1 total action
+2.7182818 Hello,protobuf
+value: 2.71828175
+message: "Hello,protobuf"
 ```
