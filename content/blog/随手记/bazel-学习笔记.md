@@ -428,3 +428,37 @@ INFO: Build completed successfully, 1 total action
 value: 2.71828175
 message: "Hello,protobuf"
 ```
+
+想用 GCC 的话可以先查询一下目前有的工具链， 
+```shell
+bazel query @local_config_cc//:toolchain --output=build
+```
+
+`MinGW-w64` 对应的名字是 `mingw-gcc`
+
+```bazel
+# Hardcoded toolchain, legacy behaviour.
+cc_toolchain_suite(
+    name = "toolchain",
+    toolchains = {
+        "armeabi-v7a|compiler": ":cc-compiler-armeabi-v7a",
+        "x64_windows|msvc-cl": ":cc-compiler-x64_windows",
+        "x64_x86_windows|msvc-cl": ":cc-compiler-x64_x86_windows",
+        "x64_arm_windows|msvc-cl": ":cc-compiler-x64_arm_windows",
+        "x64_arm64_windows|msvc-cl": ":cc-compiler-x64_arm64_windows",
+        "x64_windows|msys-gcc": ":cc-compiler-x64_windows_msys",
+        "x64_windows|mingw-gcc": ":cc-compiler-x64_windows_mingw",
+        "x64_windows|clang-cl": ":cc-compiler-x64_windows-clang-cl",
+        "x64_windows_msys": ":cc-compiler-x64_windows_msys",
+        "x64_windows": ":cc-compiler-x64_windows",
+        "x64_x86_windows": ":cc-compiler-x64_x86_windows",
+        "x64_arm_windows": ":cc-compiler-x64_arm_windows",
+        "x64_arm64_windows": ":cc-compiler-x64_arm64_windows",
+        "armeabi-v7a": ":cc-compiler-armeabi-v7a",
+    },
+)
+```
+
+运行 `bazel build src:proto_cxx_test --compiler="mingw-gcc"` 即可。
+
+当然你也可以在 `.bazelrc` 中强行钦点。
