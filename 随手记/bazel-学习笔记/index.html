@@ -351,7 +351,32 @@ INFO: Build completed successfully, <span class="token number">1</span> total ac
 INFO: Build completed successfully, <span class="token number">1</span> total action
 <span class="token number">2.7182818</span> Hello,protobuf
 value: <span class="token number">2.71828175</span>
-message: <span class="token string">"Hello,protobuf"</span></code></pre></div></div><hr class="custom-hr"/><div class="bio"><div class="author"><div class="author-description"><div class="author-image gatsby-image-wrapper" style="position:relative;overflow:hidden;display:inline-block;width:72px;height:72px;border-radius:100%"><img aria-hidden="true" src="data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAEDBQIE/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/9oADAMBAAIQAxAAAAHqjSrG2ggjGYI+8G//xAAeEAACAQMFAAAAAAAAAAAAAAABAwIEECIREjEyM//aAAgBAQABBQKrkSyKzG01ZsK9sep40yR5/wD/xAAWEQEBAQAAAAAAAAAAAAAAAAABEBH/2gAIAQMBAT8BMjP/xAAZEQABBQAAAAAAAAAAAAAAAAAAAQIQITH/2gAIAQIBAT8BuGi6f//EABwQAAMAAQUAAAAAAAAAAAAAAAABEQIQEjFBUf/aAAgBAQAGPwLYV2d6PP3kSxaooMoj/8QAHxABAAICAAcAAAAAAAAAAAAAAQARITFBYXGBobHB/9oACAEBAAE/IaY7H2VLVOjVwyWaYeSvgItaTUIErA3HXSlBALeMVtzfc//aAAwDAQACAAMAAAAQ3A8C/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREP/aAAgBAwEBPxBYBLeS/8QAGBEAAgMAAAAAAAAAAAAAAAAAADEBEGH/2gAIAQIBAT8QxTyMP//EABsQAQACAwEBAAAAAAAAAAAAAAEAESExQXGx/9oACAEBAAE/EKQYDZj1Kh40NQOSILMFidJUqaZIUHJT8seh1YXw0A7JYKGtGFvKRpmKpt+if//Z" alt="zyounan" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
+message: <span class="token string">"Hello,protobuf"</span></code></pre></div>
+<p>想用 GCC 的话可以先查询一下目前有的工具链， </p>
+<div class="gatsby-highlight" data-language="shell"><pre class="language-shell"><code class="language-shell">bazel query @local_config_cc//:toolchain --output<span class="token operator">=</span>build</code></pre></div>
+<p><code class="language-text">MinGW-w64</code> 对应的名字是 <code class="language-text">mingw-gcc</code></p>
+<div class="gatsby-highlight" data-language="bazel"><pre class="language-bazel"><code class="language-bazel"># Hardcoded toolchain, legacy behaviour.
+cc_toolchain_suite(
+    name = &quot;toolchain&quot;,
+    toolchains = {
+        &quot;armeabi-v7a|compiler&quot;: &quot;:cc-compiler-armeabi-v7a&quot;,
+        &quot;x64_windows|msvc-cl&quot;: &quot;:cc-compiler-x64_windows&quot;,
+        &quot;x64_x86_windows|msvc-cl&quot;: &quot;:cc-compiler-x64_x86_windows&quot;,
+        &quot;x64_arm_windows|msvc-cl&quot;: &quot;:cc-compiler-x64_arm_windows&quot;,
+        &quot;x64_arm64_windows|msvc-cl&quot;: &quot;:cc-compiler-x64_arm64_windows&quot;,
+        &quot;x64_windows|msys-gcc&quot;: &quot;:cc-compiler-x64_windows_msys&quot;,
+        &quot;x64_windows|mingw-gcc&quot;: &quot;:cc-compiler-x64_windows_mingw&quot;,
+        &quot;x64_windows|clang-cl&quot;: &quot;:cc-compiler-x64_windows-clang-cl&quot;,
+        &quot;x64_windows_msys&quot;: &quot;:cc-compiler-x64_windows_msys&quot;,
+        &quot;x64_windows&quot;: &quot;:cc-compiler-x64_windows&quot;,
+        &quot;x64_x86_windows&quot;: &quot;:cc-compiler-x64_x86_windows&quot;,
+        &quot;x64_arm_windows&quot;: &quot;:cc-compiler-x64_arm_windows&quot;,
+        &quot;x64_arm64_windows&quot;: &quot;:cc-compiler-x64_arm64_windows&quot;,
+        &quot;armeabi-v7a&quot;: &quot;:cc-compiler-armeabi-v7a&quot;,
+    },
+)</code></pre></div>
+<p>运行 <code class="language-text">bazel build src:proto_cxx_test --compiler=&quot;mingw-gcc&quot;</code> 即可。</p>
+<p>当然你也可以在 <code class="language-text">.bazelrc</code> 中强行钦点。</p></div><hr class="custom-hr"/><div class="bio"><div class="author"><div class="author-description"><div class="author-image gatsby-image-wrapper" style="position:relative;overflow:hidden;display:inline-block;width:72px;height:72px;border-radius:100%"><img aria-hidden="true" src="data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAEDBQIE/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/9oADAMBAAIQAxAAAAHqjSrG2ggjGYI+8G//xAAeEAACAQMFAAAAAAAAAAAAAAABAwIEECIREjEyM//aAAgBAQABBQKrkSyKzG01ZsK9sep40yR5/wD/xAAWEQEBAQAAAAAAAAAAAAAAAAABEBH/2gAIAQMBAT8BMjP/xAAZEQABBQAAAAAAAAAAAAAAAAAAAQIQITH/2gAIAQIBAT8BuGi6f//EABwQAAMAAQUAAAAAAAAAAAAAAAABEQIQEjFBUf/aAAgBAQAGPwLYV2d6PP3kSxaooMoj/8QAHxABAAICAAcAAAAAAAAAAAAAAQARITFBYXGBobHB/9oACAEBAAE/IaY7H2VLVOjVwyWaYeSvgItaTUIErA3HXSlBALeMVtzfc//aAAwDAQACAAMAAAAQ3A8C/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREP/aAAgBAwEBPxBYBLeS/8QAGBEAAgMAAAAAAAAAAAAAAAAAADEBEGH/2gAIAQIBAT8QxTyMP//EABsQAQACAwEBAAAAAAAAAAAAAAEAESExQXGx/9oACAEBAAE/EKQYDZj1Kh40NQOSILMFidJUqaZIUHJT8seh1YXw0A7JYKGtGFvKRpmKpt+if//Z" alt="zyounan" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
 /static/24586f25491b4271459aa2a1c35b309c/3bd3e/profile.jpg 1.5x,
 /static/24586f25491b4271459aa2a1c35b309c/9d183/profile.jpg 2x" /><img loading="lazy" width="72" height="72" srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
 /static/24586f25491b4271459aa2a1c35b309c/3bd3e/profile.jpg 1.5x,
