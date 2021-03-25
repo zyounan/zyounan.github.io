@@ -105,37 +105,37 @@ Slides"/><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><link a
 <li>使用 <code class="language-text">std::atomic_flag</code> 实现</li>
 </ol>
 <p>Naive 的版本：</p>
-<div class="gatsby-highlight" data-language="cxx"><pre class="language-cxx"><code class="language-cxx">struct spin_mutex {
-    std::atomic_flag flag = ATOMIC_FLAG_INIT;
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">spin_mutex</span> <span class="token punctuation">{</span>
+    std<span class="token operator">::</span>atomic_flag flag <span class="token operator">=</span> ATOMIC_FLAG_INIT<span class="token punctuation">;</span>
 
-    void lock() {
-        while (flag.test_and_set(std::memory_order::acquire))
-            ;
-    }
+    <span class="token keyword">void</span> <span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span>flag<span class="token punctuation">.</span><span class="token function">test_and_set</span><span class="token punctuation">(</span>std<span class="token operator">::</span>memory_order<span class="token operator">::</span>acquire<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
-    void unlock() {
-        flag.clear(std::memory_order::release);
-    }
-};</code></pre></div>
+    <span class="token keyword">void</span> <span class="token function">unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        flag<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span>std<span class="token operator">::</span>memory_order<span class="token operator">::</span>release<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
 <p>浪费效率。考虑改进：记录自旋次数，然后根据不同的次数做不同的操作。</p>
-<div class="gatsby-highlight" data-language="cxx"><pre class="language-cxx"><code class="language-cxx">void lock() {
-    for (unit64_t i = 0; flag.test_and_set(std::memory_order::acquire); ++i) {
-        if (i &lt; 4) ;
-        else if (i &lt; 16) // do_nop
-        else if (i &lt; 64) // yield
-        else //do_sleep
-    }
-}</code></pre></div>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span>unit64_t i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> flag<span class="token punctuation">.</span><span class="token function">test_and_set</span><span class="token punctuation">(</span>std<span class="token operator">::</span>memory_order<span class="token operator">::</span>acquire<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token punctuation">;</span>
+        <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;</span> <span class="token number">16</span><span class="token punctuation">)</span> <span class="token comment">// do_nop</span>
+        <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;</span> <span class="token number">64</span><span class="token punctuation">)</span> <span class="token comment">// yield</span>
+        <span class="token keyword">else</span> <span class="token comment">//do_sleep</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre></div>
 <p>C++20: 在 <code class="language-text">atomic</code> 上的等待操作</p>
-<div class="gatsby-highlight" data-language="cxx"><pre class="language-cxx"><code class="language-cxx">void lock() {
-    while (flag.test_and_set(std::memory_order::acquire))
-        flag.wait(true, std::memory_order_relaxed);
-}
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token keyword">void</span> <span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>flag<span class="token punctuation">.</span><span class="token function">test_and_set</span><span class="token punctuation">(</span>std<span class="token operator">::</span>memory_order<span class="token operator">::</span>acquire<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        flag<span class="token punctuation">.</span><span class="token function">wait</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">,</span> std<span class="token operator">::</span>memory_order_relaxed<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
 
-void unlock() {
-    flag.clear(std::memory_order::release);
-    flag.notify_one();
-}</code></pre></div>
+<span class="token keyword">void</span> <span class="token function">unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    flag<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span>std<span class="token operator">::</span>memory_order<span class="token operator">::</span>release<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    flag<span class="token punctuation">.</span><span class="token function">notify_one</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
 <p><code class="language-text">wait</code> 和 <code class="language-text">notify</code> 都有啥实现策略呢？</p>
 <ul>
 <li>
@@ -157,29 +157,29 @@ void unlock() {
 <p>自旋锁的一种</p>
 <p>两个 <code class="language-text">atomic</code>，类似于排队叫号的设计</p>
 <p>防止一个线程进入 <code class="language-text">lock</code> 的时候被另一个线程抢先（插队）</p>
-<div class="gatsby-highlight" data-language="cxx"><pre class="language-cxx"><code class="language-cxx">struct ticket_mutex {
-    std::atomic&lt;int&gt; in = ATOMIC_VAR_INIT(0);
-    std::atomic&lt;int&gt; out = ATOMIC_VAR_INIT(0);
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token keyword">struct</span> <span class="token class-name">ticket_mutex</span> <span class="token punctuation">{</span>
+    std<span class="token operator">::</span>atomic<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> in <span class="token operator">=</span> <span class="token function">ATOMIC_VAR_INIT</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    std<span class="token operator">::</span>atomic<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> out <span class="token operator">=</span> <span class="token function">ATOMIC_VAR_INIT</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    void lock() {
-        auto const my = in.fetch_add(1, std::memory_order::acquire);
-        while (true) {
-            auto const now = out.load(std::memory_order::acquire);
-            if (my == now) break;
-            out.wait(now, std::memory_order::relaxed);
-        }
-    }
+    <span class="token keyword">void</span> <span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">auto</span> <span class="token keyword">const</span> my <span class="token operator">=</span> in<span class="token punctuation">.</span><span class="token function">fetch_add</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> std<span class="token operator">::</span>memory_order<span class="token operator">::</span>acquire<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">auto</span> <span class="token keyword">const</span> now <span class="token operator">=</span> out<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span>std<span class="token operator">::</span>memory_order<span class="token operator">::</span>acquire<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>my <span class="token operator">==</span> now<span class="token punctuation">)</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+            out<span class="token punctuation">.</span><span class="token function">wait</span><span class="token punctuation">(</span>now<span class="token punctuation">,</span> std<span class="token operator">::</span>memory_order<span class="token operator">::</span>relaxed<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
 
-    void unlock() {
-        out.fetch_add(1, std::memory_order::release);
-        out.notify_all();
-    }
-};</code></pre></div>
+    <span class="token keyword">void</span> <span class="token function">unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        out<span class="token punctuation">.</span><span class="token function">fetch_add</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> std<span class="token operator">::</span>memory_order<span class="token operator">::</span>release<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        out<span class="token punctuation">.</span><span class="token function">notify_all</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
 <p><strong>False Sharing</strong></p>
 <p><code class="language-text">in</code> 和 <code class="language-text">out</code> 可能会被放到一个 <code class="language-text">Cache Line</code> 中。两个相互独立的原子变量都会导致 Cache 的重新装载</p>
 <p>解决方案：</p>
-<div class="gatsby-highlight" data-language="cxx"><pre class="language-cxx"><code class="language-cxx">alignas(std::hardware_destructive_interference_size)
-std::atomic&lt;int&gt; in = ATOMIC_VAR_INIT(0);</code></pre></div>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token keyword">alignas</span><span class="token punctuation">(</span>std<span class="token operator">::</span>hardware_destructive_interference_size<span class="token punctuation">)</span>
+std<span class="token operator">::</span>atomic<span class="token operator">&lt;</span><span class="token keyword">int</span><span class="token operator">></span> in <span class="token operator">=</span> <span class="token function">ATOMIC_VAR_INIT</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
 <p><code class="language-text">std::hardware_constructive_interference_size</code> 是保证 <code class="language-text">True sharing</code> 的最大上限，
 <code class="language-text">std::hardware_destructive_interference_size</code> 是保证 <code class="language-text">False sharing</code> 的最小下限。</p>
 <h3 id="code-classlanguage-textstdlatchcode-vs-code-classlanguage-textstdbarriercode" style="position:relative;"><a href="#code-classlanguage-textstdlatchcode-vs-code-classlanguage-textstdbarriercode" aria-label="code classlanguage textstdlatchcode vs code classlanguage textstdbarriercode permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code class="language-text">std::latch</code> vs <code class="language-text">std::barrier</code></h3>
@@ -188,33 +188,33 @@ std::atomic&lt;int&gt; in = ATOMIC_VAR_INIT(0);</code></pre></div>
 <li>Supports asynchronous arrival</li>
 </ul>
 <p>考虑这样的一个场景，假设有一个任务队列</p>
-<div class="gatsby-highlight" data-language="cxx"><pre class="language-cxx"><code class="language-cxx">template &lt;size_t QueueDepth&gt;
-struct bounded_depth_task_manager {
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token keyword">template</span> <span class="token operator">&lt;</span>size_t QueueDepth<span class="token operator">></span>
+<span class="token keyword">struct</span> <span class="token class-name">bounded_depth_task_manager</span> <span class="token punctuation">{</span>
 
-    void process_tasks(std::stop_token s) {
-        while (!s.stop_requested())
-            tasks.deque().operator()();
-        // 如果最后一个任务在线程 A deque 之前被线程 B 取走了
-        // 那么线程 A 就阻塞到 tasks 中等待，但是这个时候队列是空的
-        // 我们需要把它从这个循环中拿出来
+    <span class="token keyword">void</span> <span class="token function">process_tasks</span><span class="token punctuation">(</span>std<span class="token operator">::</span>stop_token s<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span>s<span class="token punctuation">.</span><span class="token function">stop_requested</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            tasks<span class="token punctuation">.</span><span class="token function">deque</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token keyword">operator</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// 如果最后一个任务在线程 A deque 之前被线程 B 取走了</span>
+        <span class="token comment">// 那么线程 A 就阻塞到 tasks 中等待，但是这个时候队列是空的</span>
+        <span class="token comment">// 我们需要把它从这个循环中拿出来</span>
 
-        // 确保队列在 `request_stop` 后是空的
-        while (true) {
-            if (auto task = tasks.try_deque())  std::move(*task)();
-            else break;
-        }
-    }
-    ~bounded_depth_task_manager() {
-        std::latch l(threads.size() + 1); // 线程数 + 主线程
-        // 确保每个线程取到一次这个任务，然后在上面等待
-        for (int i : std::views::iota(0, threads.size()))
-            tasks.submit([&amp;] { l.arrive_and_wait(); }); 
-        threads.request_stop();
-        l.count_down();         // 如果所有线程都阻塞在这个任务上了，那么现在的计数值就是 1
-        // 主线程释放掉这个，那么所有的线程就可以继续运行，之后正常退出
-        // 相当于让所有线程都在等待一件事情
-    }
-};</code></pre></div>
+        <span class="token comment">// 确保队列在 `request_stop` 后是空的</span>
+        <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">auto</span> task <span class="token operator">=</span> tasks<span class="token punctuation">.</span><span class="token function">try_deque</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  std<span class="token operator">::</span><span class="token function">move</span><span class="token punctuation">(</span><span class="token operator">*</span>task<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">else</span> <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token operator">~</span><span class="token function">bounded_depth_task_manager</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        std<span class="token operator">::</span>latch <span class="token function">l</span><span class="token punctuation">(</span>threads<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 线程数 + 主线程</span>
+        <span class="token comment">// 确保每个线程取到一次这个任务，然后在上面等待</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">:</span> std<span class="token operator">::</span>views<span class="token operator">::</span><span class="token function">iota</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> threads<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            tasks<span class="token punctuation">.</span><span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token operator">&amp;</span><span class="token punctuation">]</span> <span class="token punctuation">{</span> l<span class="token punctuation">.</span><span class="token function">arrive_and_wait</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
+        threads<span class="token punctuation">.</span><span class="token function">request_stop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        l<span class="token punctuation">.</span><span class="token function">count_down</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>         <span class="token comment">// 如果所有线程都阻塞在这个任务上了，那么现在的计数值就是 1</span>
+        <span class="token comment">// 主线程释放掉这个，那么所有的线程就可以继续运行，之后正常退出</span>
+        <span class="token comment">// 相当于让所有线程都在等待一件事情</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
 <p><code class="language-text">std::latch</code> 是一次性的，也就是它的计数值是不能增加的。
 <code class="language-text">std::barrier</code> 就不是一次性的。它拥有多个阶段 (phases)，每个阶段在线程计数值到 0 后调用回调；之后重新将计数值调整到构造函数指定的值。</p></div><hr class="custom-hr"/><div class="bio"><div class="author"><div class="author-description"><div class="author-image gatsby-image-wrapper" style="position:relative;overflow:hidden;display:inline-block;width:72px;height:72px;border-radius:100%"><img aria-hidden="true" src="data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAEDBQIE/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgED/9oADAMBAAIQAxAAAAHqjSrG2ggjGYI+8G//xAAeEAACAQMFAAAAAAAAAAAAAAABAwIEECIREjEyM//aAAgBAQABBQKrkSyKzG01ZsK9sep40yR5/wD/xAAWEQEBAQAAAAAAAAAAAAAAAAABEBH/2gAIAQMBAT8BMjP/xAAZEQABBQAAAAAAAAAAAAAAAAAAAQIQITH/2gAIAQIBAT8BuGi6f//EABwQAAMAAQUAAAAAAAAAAAAAAAABEQIQEjFBUf/aAAgBAQAGPwLYV2d6PP3kSxaooMoj/8QAHxABAAICAAcAAAAAAAAAAAAAAQARITFBYXGBobHB/9oACAEBAAE/IaY7H2VLVOjVwyWaYeSvgItaTUIErA3HXSlBALeMVtzfc//aAAwDAQACAAMAAAAQ3A8C/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAREP/aAAgBAwEBPxBYBLeS/8QAGBEAAgMAAAAAAAAAAAAAAAAAADEBEGH/2gAIAQIBAT8QxTyMP//EABsQAQACAwEBAAAAAAAAAAAAAAEAESExQXGx/9oACAEBAAE/EKQYDZj1Kh40NQOSILMFidJUqaZIUHJT8seh1YXw0A7JYKGtGFvKRpmKpt+if//Z" alt="zyounan" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/24586f25491b4271459aa2a1c35b309c/3e51d/profile.jpg 1x,
 /static/24586f25491b4271459aa2a1c35b309c/3bd3e/profile.jpg 1.5x,
