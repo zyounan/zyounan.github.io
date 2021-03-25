@@ -1,5 +1,5 @@
 ---
-title: [cppcon 2019] cpp20-synchronization-library
+title: 「cppcon 2019」cpp20-synchronization-library
 date: 2021-03-25 17:03:49
 category: cxx
 thumbnail: { thumbnailSrc }
