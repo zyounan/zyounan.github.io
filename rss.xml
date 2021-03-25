@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[zyounan's blog]]></title><description><![CDATA[Blog posted about ...]]></description><link>https://zyounan.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 25 Mar 2021 12:58:23 GMT</lastBuildDate><item><title><![CDATA[「cppcon 2019」cpp20-synchronization-library]]></title><description><![CDATA[视频地址
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[zyounan's blog]]></title><description><![CDATA[Blog posted about ...]]></description><link>https://zyounan.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 25 Mar 2021 15:53:55 GMT</lastBuildDate><item><title><![CDATA[「cppcon 2019」cpp20-synchronization-library]]></title><description><![CDATA[视频地址
 Slides]]></description><link>https://zyounan.github.io/cxx/[cppcon-2019]-cpp20-synchronization-library/</link><guid isPermaLink="false">https://zyounan.github.io/cxx/[cppcon-2019]-cpp20-synchronization-library/</guid><pubDate>Thu, 25 Mar 2021 17:03:49 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Zcqwb3CWqs4&quot;&gt;视频地址&lt;/a&gt;
 &lt;a href=&quot;https://github.com/CppCon/CppCon2019/blob/master/Presentations/cpp20_synchronization_library/cpp20_synchronization_library__r2__bryce_adelstein_lelbach__cppcon_2019.pdf&quot;&gt;Slides&lt;/a&gt;  &lt;/p&gt;
 &lt;!-- separate --&gt;
@@ -31,7 +31,124 @@ Slides]]></description><link>https://zyounan.github.io/cxx/[cppcon-2019]-cpp20-s
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ol&gt;</content:encoded></item><item><title><![CDATA[Bazel 学习笔记]]></title><description><![CDATA[官方文档的大致整理 :)]]></description><link>https://zyounan.github.io/随手记/bazel-学习笔记/</link><guid isPermaLink="false">https://zyounan.github.io/随手记/bazel-学习笔记/</guid><pubDate>Fri, 05 Mar 2021 14:04:14 GMT</pubDate><content:encoded>&lt;p&gt;官方文档的大致整理 :)&lt;/p&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;自旋锁&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E8%87%AA%E6%97%8B%E9%94%81&quot; aria-label=&quot;自旋锁 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;自旋锁&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 &lt;code class=&quot;language-text&quot;&gt;std::atomic_flag&lt;/code&gt; 实现&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Naive 的版本：&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cxx&quot;&gt;&lt;pre class=&quot;language-cxx&quot;&gt;&lt;code class=&quot;language-cxx&quot;&gt;struct spin_mutex {
+    std::atomic_flag flag = ATOMIC_FLAG_INIT;
+
+    void lock() {
+        while (flag.test_and_set(std::memory_order::acquire))
+            ;
+    }
+
+    void unlock() {
+        flag.clear(std::memory_order::release);
+    }
+};&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;浪费效率。考虑改进：记录自旋次数，然后根据不同的次数做不同的操作。&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cxx&quot;&gt;&lt;pre class=&quot;language-cxx&quot;&gt;&lt;code class=&quot;language-cxx&quot;&gt;void lock() {
+    for (unit64_t i = 0; flag.test_and_set(std::memory_order::acquire); ++i) {
+        if (i &amp;lt; 4) ;
+        else if (i &amp;lt; 16) // do_nop
+        else if (i &amp;lt; 64) // yield
+        else //do_sleep
+    }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;C++20: 在 &lt;code class=&quot;language-text&quot;&gt;atomic&lt;/code&gt; 上的等待操作&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cxx&quot;&gt;&lt;pre class=&quot;language-cxx&quot;&gt;&lt;code class=&quot;language-cxx&quot;&gt;void lock() {
+    while (flag.test_and_set(std::memory_order::acquire))
+        flag.wait(true, std::memory_order_relaxed);
+}
+
+void unlock() {
+    flag.clear(std::memory_order::release);
+    flag.notify_one();
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;wait&lt;/code&gt; 和 &lt;code class=&quot;language-text&quot;&gt;notify&lt;/code&gt; 都有啥实现策略呢？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Futex: Fast Userspace Mutex&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这玩意儿在 Windows 下有类似的实现是 &lt;code class=&quot;language-text&quot;&gt;WaitOnAddress&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://devblogs.microsoft.com/oldnewthing/20170601-00/?p=96265&quot;&gt;Futex vs WaitOnAddress&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Condition Variables&lt;/li&gt;
+&lt;li&gt;Spin Lock&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;原来的 Slides 上还放了几个方法，但是没找到相关的资料&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Contention Table&lt;/li&gt;
+&lt;li&gt;Timed back-off&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;ticket-lock&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#ticket-lock&quot; aria-label=&quot;ticket lock permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Ticket lock&lt;/h4&gt;
+&lt;p&gt;自旋锁的一种&lt;/p&gt;
+&lt;p&gt;两个 &lt;code class=&quot;language-text&quot;&gt;atomic&lt;/code&gt;，类似于排队叫号的设计&lt;/p&gt;
+&lt;p&gt;防止一个线程进入 &lt;code class=&quot;language-text&quot;&gt;lock&lt;/code&gt; 的时候被另一个线程抢先（插队）&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cxx&quot;&gt;&lt;pre class=&quot;language-cxx&quot;&gt;&lt;code class=&quot;language-cxx&quot;&gt;struct ticket_mutex {
+    std::atomic&amp;lt;int&amp;gt; in = ATOMIC_VAR_INIT(0);
+    std::atomic&amp;lt;int&amp;gt; out = ATOMIC_VAR_INIT(0);
+
+    void lock() {
+        auto const my = in.fetch_add(1, std::memory_order::acquire);
+        while (true) {
+            auto const now = out.load(std::memory_order::acquire);
+            if (my == now) break;
+            out.wait(now, std::memory_order::relaxed);
+        }
+    }
+
+    void unlock() {
+        out.fetch_add(1, std::memory_order::release);
+        out.notify_all();
+    }
+};&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;False Sharing&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;in&lt;/code&gt; 和 &lt;code class=&quot;language-text&quot;&gt;out&lt;/code&gt; 可能会被放到一个 &lt;code class=&quot;language-text&quot;&gt;Cache Line&lt;/code&gt; 中。两个相互独立的原子变量都会导致 Cache 的重新装载&lt;/p&gt;
+&lt;p&gt;解决方案：&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cxx&quot;&gt;&lt;pre class=&quot;language-cxx&quot;&gt;&lt;code class=&quot;language-cxx&quot;&gt;alignas(std::hardware_destructive_interference_size)
+std::atomic&amp;lt;int&amp;gt; in = ATOMIC_VAR_INIT(0);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;std::hardware_constructive_interference_size&lt;/code&gt; 是保证 &lt;code class=&quot;language-text&quot;&gt;True sharing&lt;/code&gt; 的最大上限，
+&lt;code class=&quot;language-text&quot;&gt;std::hardware_destructive_interference_size&lt;/code&gt; 是保证 &lt;code class=&quot;language-text&quot;&gt;False sharing&lt;/code&gt; 的最小下限。&lt;/p&gt;
+&lt;h3 id=&quot;code-classlanguage-textstdlatchcode-vs-code-classlanguage-textstdbarriercode&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#code-classlanguage-textstdlatchcode-vs-code-classlanguage-textstdbarriercode&quot; aria-label=&quot;code classlanguage textstdlatchcode vs code classlanguage textstdbarriercode permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;&lt;code class=&quot;language-text&quot;&gt;std::latch&lt;/code&gt; vs &lt;code class=&quot;language-text&quot;&gt;std::barrier&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;latch&lt;/code&gt; 有门闩的意思，实际上很形象：大致作用就是让所有线程们遇到它就阻塞，同时等待某个事件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Supports asynchronous arrival&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;考虑这样的一个场景，假设有一个任务队列&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cxx&quot;&gt;&lt;pre class=&quot;language-cxx&quot;&gt;&lt;code class=&quot;language-cxx&quot;&gt;template &amp;lt;size_t QueueDepth&amp;gt;
+struct bounded_depth_task_manager {
+
+    void process_tasks(std::stop_token s) {
+        while (!s.stop_requested())
+            tasks.deque().operator()();
+        // 如果最后一个任务在线程 A deque 之前被线程 B 取走了
+        // 那么线程 A 就阻塞到 tasks 中等待，但是这个时候队列是空的
+        // 我们需要把它从这个循环中拿出来
+
+        // 确保队列在 `request_stop` 后是空的
+        while (true) {
+            if (auto task = tasks.try_deque())  std::move(*task)();
+            else break;
+        }
+    }
+    ~bounded_depth_task_manager() {
+        std::latch l(threads.size() + 1); // 线程数 + 主线程
+        // 确保每个线程取到一次这个任务，然后在上面等待
+        for (int i : std::views::iota(0, threads.size()))
+            tasks.submit([&amp;amp;] { l.arrive_and_wait(); }); 
+        threads.request_stop();
+        l.count_down();         // 如果所有线程都阻塞在这个任务上了，那么现在的计数值就是 1
+        // 主线程释放掉这个，那么所有的线程就可以继续运行，之后正常退出
+        // 相当于让所有线程都在等待一件事情
+    }
+};&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;std::latch&lt;/code&gt; 是一次性的，也就是它的计数值是不能增加的。
+&lt;code class=&quot;language-text&quot;&gt;std::barrier&lt;/code&gt; 就不是一次性的。它拥有多个阶段 (phases)，每个阶段在线程计数值到 0 后调用回调；之后重新将计数值调整到构造函数指定的值。&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Bazel 学习笔记]]></title><description><![CDATA[官方文档的大致整理 :)]]></description><link>https://zyounan.github.io/随手记/bazel-学习笔记/</link><guid isPermaLink="false">https://zyounan.github.io/随手记/bazel-学习笔记/</guid><pubDate>Fri, 05 Mar 2021 14:04:14 GMT</pubDate><content:encoded>&lt;p&gt;官方文档的大致整理 :)&lt;/p&gt;
 &lt;!-- separate --&gt;
 &lt;h3 id=&quot;一些基本概念和名词&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E5%92%8C%E5%90%8D%E8%AF%8D&quot; aria-label=&quot;一些基本概念和名词 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;一些基本概念和名词&lt;/h3&gt;
 &lt;h4 id=&quot;workspace&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#workspace&quot; aria-label=&quot;workspace permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Workspace&lt;/h4&gt;
