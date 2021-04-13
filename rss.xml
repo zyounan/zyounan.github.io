@@ -1,4 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[zyounan's blog]]></title><description><![CDATA[Blog posted about ...]]></description><link>https://zyounan.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 25 Mar 2021 16:05:56 GMT</lastBuildDate><item><title><![CDATA[「cppcon 2019」cpp20-synchronization-library]]></title><description><![CDATA[视频地址
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[zyounan's blog]]></title><description><![CDATA[Blog posted about ...]]></description><link>https://zyounan.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 13 Apr 2021 15:43:25 GMT</lastBuildDate><item><title><![CDATA[「cppcon-2018」 RVO-harder-than-it-looks]]></title><description><![CDATA[视频地址
+Slides Return slot…]]></description><link>https://zyounan.github.io/cxx/[cppcon-2018]-rvo-harder-than-it-looks/</link><guid isPermaLink="false">https://zyounan.github.io/cxx/[cppcon-2018]-rvo-harder-than-it-looks/</guid><pubDate>Tue, 13 Apr 2021 22:04:51 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=hA1WNtNyNbo&amp;#x26;ab_channel=CppCon&quot;&gt;视频地址&lt;/a&gt;
+&lt;a href=&quot;https://github.com/CppCon/CppCon2018/blob/master/Presentations/return_value_optimization_harder_than_it_looks/return_value_optimization_harder_than_it_looks__arthur_odwyer__cppcon_2018.pdf&quot;&gt;Slides&lt;/a&gt;&lt;/p&gt;
+&lt;!-- seperate --&gt;
+&lt;ol&gt;
+&lt;li&gt;Return slot&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;x86-64&lt;/code&gt; 的调用约定中，对于某些返回值不能塞入寄存器（往往是 &lt;code class=&quot;language-text&quot;&gt;rax&lt;/code&gt;）中的情形，编译器会额外地添加一个隐式参数（&lt;code class=&quot;language-text&quot;&gt;return slot address&lt;/code&gt;），用于传递一个指向返回值的地址（往往是 &lt;code class=&quot;language-text&quot;&gt;rdi&lt;/code&gt;）。&lt;/p&gt;
+&lt;p&gt;调用方拥有 &lt;code class=&quot;language-text&quot;&gt;return slot&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cpp&quot;&gt;&lt;pre class=&quot;language-cpp&quot;&gt;&lt;code class=&quot;language-cpp&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;S&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token function&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;S&lt;span class=&quot;token operator&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token keyword&quot;&gt;bool&lt;/span&gt; cond&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    S x &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;
+    S y &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; std&lt;span class=&quot;token operator&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;token function&quot;&gt;move&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;cond &lt;span class=&quot;token operator&quot;&gt;?&lt;/span&gt; x &lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; y&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;注意到这里由于没有办法立刻知道返回的结果，所以不能直接把对象构造到 &lt;code class=&quot;language-text&quot;&gt;return slot&lt;/code&gt; 中。&lt;/p&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;复制消除&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;C++17 强制要求&lt;/p&gt;
+&lt;p&gt;什么时候不能？&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cpp&quot;&gt;&lt;pre class=&quot;language-cpp&quot;&gt;&lt;code class=&quot;language-cpp&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token keyword&quot;&gt;int&lt;/span&gt; x&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; S y&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; y&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;不知道 &lt;code class=&quot;language-text&quot;&gt;y&lt;/code&gt; 的实际位置，所以没办法直接把 &lt;code class=&quot;language-text&quot;&gt;y&lt;/code&gt; 给 &lt;code class=&quot;language-text&quot;&gt;return slot&lt;/code&gt;。以此类推，&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cpp&quot;&gt;&lt;pre class=&quot;language-cpp&quot;&gt;&lt;code class=&quot;language-cpp&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;static&lt;/span&gt; S x&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token keyword&quot;&gt;auto&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; x&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;也无法进行复制消除。（我们不知道 &lt;code class=&quot;language-text&quot;&gt;x&lt;/code&gt; 实际存放在哪里）&lt;/p&gt;
+&lt;p&gt;继承……？
+如果子类比父类的 &lt;code class=&quot;language-text&quot;&gt;size&lt;/code&gt; 大&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cpp&quot;&gt;&lt;pre class=&quot;language-cpp&quot;&gt;&lt;code class=&quot;language-cpp&quot;&gt;&lt;span class=&quot;token keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;token class-name&quot;&gt;SS&lt;/span&gt; &lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token base-clause&quot;&gt;&lt;span class=&quot;token class-name&quot;&gt;S&lt;/span&gt;&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;double&lt;/span&gt; member&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+
+S &lt;span class=&quot;token function&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    SS something &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; something&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;同样也不会进行 RVO&lt;/p&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;隐式移动 (Implicitly move)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&quot;https://wg21.cmeerw.net/cwg/issue1579&quot;&gt;CWG 1579&lt;/a&gt;，做了一些修正.&lt;/p&gt;
+&lt;p&gt;优先把对象当成“右值”，根据重载决议选择移动构造函数。如果重载决议失败了，或者说重载决议选择的构造函数的第一个参数&lt;strong&gt;不是一个指向该对象的右值引用（可以有 cv 限定）&lt;/strong&gt;，那么就再把它当成“左值”再去进行一次重载决议。&lt;/p&gt;
+&lt;p&gt;目前的&lt;a href=&quot;http://eel.is/c++draft/class.copy.elision#3&quot;&gt;([class.copy.elison]/3)&lt;/a&gt;是，如果 &lt;code class=&quot;language-text&quot;&gt;return&lt;/code&gt; 语句中的表达式是 &lt;code class=&quot;language-text&quot;&gt;id-expression&lt;/code&gt;，并且这个表达式指代的对象在函数体或者参数中，并且可以被移动，那么就优先考虑移动操作。&lt;/p&gt;
+&lt;p&gt;所以如果是继承的对象的话，即使有移动构造函数，但是如果不是完全匹配的话，那么仍然不会进行隐式移动。&lt;/p&gt;
+&lt;p&gt;这个提案被加进去的原因之一是因为 &lt;code class=&quot;language-text&quot;&gt;std::unique_ptr&lt;/code&gt;，&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;cpp&quot;&gt;&lt;pre class=&quot;language-cpp&quot;&gt;&lt;code class=&quot;language-cpp&quot;&gt;std&lt;span class=&quot;token operator&quot;&gt;::&lt;/span&gt;unique_ptr&lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;ConfigManager&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt; &lt;span class=&quot;token function&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;auto&lt;/span&gt; p &lt;span class=&quot;token operator&quot;&gt;=&lt;/span&gt; std&lt;span class=&quot;token operator&quot;&gt;::&lt;/span&gt;make_unique&lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;ConfigManagerImpl&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token keyword&quot;&gt;return&lt;/span&gt; p&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;这里面就不需要 &lt;code class=&quot;language-text&quot;&gt;conversion operators&lt;/code&gt;，只需要有一个接受右值引用的构造函数(&lt;code class=&quot;language-text&quot;&gt;converting constructors&lt;/code&gt;)就行了。&lt;/p&gt;
+&lt;p&gt;还是他的一篇博文：
+&lt;a href=&quot;https://quuxplusone.github.io/blog/2021/03/07/copy-elision-borks-escape-analysis/&quot;&gt;https://quuxplusone.github.io/blog/2021/03/07/copy-elision-borks-escape-analysis/&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[「cppcon 2019」cpp20-synchronization-library]]></title><description><![CDATA[视频地址
 Slides]]></description><link>https://zyounan.github.io/cxx/[cppcon-2019]-cpp20-synchronization-library/</link><guid isPermaLink="false">https://zyounan.github.io/cxx/[cppcon-2019]-cpp20-synchronization-library/</guid><pubDate>Thu, 25 Mar 2021 17:03:49 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Zcqwb3CWqs4&quot;&gt;视频地址&lt;/a&gt;
 &lt;a href=&quot;https://github.com/CppCon/CppCon2019/blob/master/Presentations/cpp20_synchronization_library/cpp20_synchronization_library__r2__bryce_adelstein_lelbach__cppcon_2019.pdf&quot;&gt;Slides&lt;/a&gt;  &lt;/p&gt;
 &lt;!-- separate --&gt;
